@@ -50,11 +50,11 @@ class Program
             recordList.Add(new UserRecord(line.Split(",")));
             line = s.ReadLine();
         }
-        Console.WriteLine(recordList[0].Uid);
         return recordList;
     }
     static void Main(string[] args)
     {
-        read();
+        List<UserRecord> r = read();
+        Console.WriteLine(r.Count);
     }
 }
