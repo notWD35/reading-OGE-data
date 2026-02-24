@@ -31,3 +31,5 @@ publish/
 *.nuget.targets
 project.lock.json
 project.fragment.lock.json
+
+*.xlsx
