@@ -55,15 +55,21 @@ class Program
     static void Main(string[] args)
     {
         List<UserRecord> records = read();
-        // Console.WriteLine(records.Count);
         var inactiveRecords = from record in records
                               where record.CloudLifecycleState == false
                               orderby record.DisplayName
-                              group record by record.DisplayName into recordName
-                              select new { Name = recordName.Key, Records = recordName };
-        // Console.WriteLine($"Inactive Records: {inactiveRecords.Count()}");
-        Console.WriteLine("List of Names of Inactive Users From Records:");
-        foreach (var record in inactiveRecords) Console.WriteLine(record.Name);
+                              group record by record.DisplayName into recordGroup
+                              select new { Name = recordGroup.Key, Records = recordGroup };
+        Console.WriteLine("List of Names of Inactive Users From Records Followed By Access Held By User:");
+        foreach (var record in inactiveRecords)
+        {
+            Console.WriteLine(record.Name);
+            foreach (var info in record.Records)
+            {
+                Console.WriteLine($"{info.AccessSourceName}{info.AccessDisplayName, -40}");
+            }
+            break;
+        }
         Console.WriteLine("- End of List -");
     }
 }
