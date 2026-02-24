@@ -54,7 +54,11 @@ class Program
     }
     static void Main(string[] args)
     {
-        List<UserRecord> r = read();
-        Console.WriteLine(r.Count);
+        List<UserRecord> records = read();
+        // Console.WriteLine(records.Count);
+        IEnumerable<UserRecord> inactiveRecords = from record in records
+                                                  where record.CloudLifecycleState == false
+                                                  select record;
+        Console.WriteLine($"Inactive Records: {inactiveRecords.Count()}");
     }
 }
