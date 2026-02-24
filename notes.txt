@@ -1,0 +1,1 @@
+make sure to ask whether users who are blank in the cloudlifecyclestate column are active or inactive
