@@ -56,9 +56,14 @@ class Program
     {
         List<UserRecord> records = read();
         // Console.WriteLine(records.Count);
-        IEnumerable<UserRecord> inactiveRecords = from record in records
-                                                  where record.CloudLifecycleState == false
-                                                  select record;
-        Console.WriteLine($"Inactive Records: {inactiveRecords.Count()}");
+        var inactiveRecords = from record in records
+                              where record.CloudLifecycleState == false
+                              orderby record.DisplayName
+                              group record by record.DisplayName into recordName
+                              select new { Name = recordName.Key, Records = recordName };
+        // Console.WriteLine($"Inactive Records: {inactiveRecords.Count()}");
+        Console.WriteLine("List of Names of Inactive Users From Records:");
+        foreach (var record in inactiveRecords) Console.WriteLine(record.Name);
+        Console.WriteLine("- End of List -");
     }
 }
