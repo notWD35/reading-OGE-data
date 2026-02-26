@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.ComponentModel.Design;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using Microsoft.Win32.SafeHandles;
 
 namespace reading_OGE_data;
@@ -57,19 +59,14 @@ class Program
         List<UserRecord> records = read();
         var inactiveRecords = from record in records
                               where record.CloudLifecycleState == false
-                              orderby record.DisplayName
-                              group record by record.DisplayName into recordGroup
-                              select new { Name = recordGroup.Key, Records = recordGroup };
+                              orderby record.Department
+                              group record by record.Department into deptGroup
+                              select new { Department = deptGroup.Key, Employees = deptGroup};
         Console.WriteLine("List of Names of Inactive Users From Records Followed By Access Held By User:");
-        foreach (var record in inactiveRecords)
+
+        foreach (var record in inactiveRecords) 
         {
-            Console.WriteLine(record.Name);
-            foreach (var info in record.Records)
-            {
-                Console.WriteLine($"{info.AccessSourceName}{info.AccessDisplayName, -40}");
-            }
-            break;
+            if (record.Length > 0) Console.WriteLine(record);
         }
-        Console.WriteLine("- End of List -");
     }
 }
