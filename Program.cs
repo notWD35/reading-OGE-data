@@ -57,16 +57,16 @@ class Program
     static void Main(string[] args)
     {
         List<UserRecord> records = read();
-        var inactiveRecords = from record in records
-                              where record.CloudLifecycleState == false
-                              orderby record.Department
-                              group record by record.Department into deptGroup
-                              select new { Department = deptGroup.Key, Employees = deptGroup};
-        Console.WriteLine("List of Names of Inactive Users From Records Followed By Access Held By User:");
+        var inactiveRecords = records
+                              .Where(r => r.Department is not "" or null)
+                              .Where(r => r.CloudLifecycleState is false)
+                              .OrderBy(r => r.Department)
+                              .GroupBy(r => r.Department)
+                              .Select(r => new {Department = r.Key, Employees = r.Select(r => r.DisplayName).Distinct()});
 
-        foreach (var record in inactiveRecords) 
+        foreach (var record in inactiveRecords)
         {
-            if (record.Length > 0) Console.WriteLine(record);
+            Console.WriteLine($"{record.Department} has {record.Employees.Count()} inactive employees");
         }
     }
 }
