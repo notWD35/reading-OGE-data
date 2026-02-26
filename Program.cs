@@ -54,16 +54,83 @@ class Program
         }
         return recordList;
     }
+    static List<UserRecord> records = read();
     static void Main(string[] args)
     {
-        List<UserRecord> records = read();
+        // Q1();
+        // Q2();
+        // Q3();
+        // Q4();
+        // Q5();
+        Q6();
+    }
+    static void Q1()
+    {
+        var inactiveRecords = records.Where(r => !r.CloudLifecycleState);
+        Console.WriteLine($"Inactive Records: {inactiveRecords.Count()}");
+    }
+    static void Q2()
+    {
         var inactiveRecords = records
-                              .Where(r => r.Department is not "" or null)
                               .Where(r => r.CloudLifecycleState is false)
-                              .Where(r => r.AccessType is not "" or null)
+                              .OrderBy(r => r.DisplayName)
+                              .Select(r => r.DisplayName)
+                              .Distinct();
+        Console.WriteLine("List of Names of Inactive Users From Records:");
+        foreach (var record in inactiveRecords) Console.WriteLine(record);
+        Console.WriteLine("- End of List -");
+    }
+    static void Q3()
+    {
+        var inactiveRecords = records
+                              .Where(r => !r.CloudLifecycleState)
+                              .Where(r => !string.IsNullOrEmpty(r.AccessType))
+                              .OrderBy(r => r.DisplayName)
+                              .GroupBy(r => r.DisplayName)
+                              .Select(r => new { Name = r.Key, Records = r });
+        Console.WriteLine("List of Names of Inactive Users From Records Followed By Access Held By User:");
+        foreach (var record in inactiveRecords)
+        {
+            Console.WriteLine(record.Name);
+            foreach (var info in record.Records) Console.WriteLine($"   {info.AccessSourceName,-20}{info.AccessDisplayName}");
+            Console.WriteLine();
+        }
+        Console.WriteLine("- End of List -");
+    }
+    static void Q4()
+    {
+        var inactiveRecords = records
+                              .Where(r => !r.CloudLifecycleState)
+                              .Where(r => !string.IsNullOrEmpty(r.Department))
+                              .OrderBy(r => r.Department)
+                              .Select(r => r.Department)
+                              .Distinct();
+        Console.WriteLine("Departments with Inactive Users:");
+        foreach (var record in inactiveRecords) Console.WriteLine(record);
+    }
+    static void Q5()
+    {
+        var inactiveRecords = records
+                              .Where(r => !r.CloudLifecycleState)
+                              .Where(r => !string.IsNullOrEmpty(r.Department))
                               .OrderBy(r => r.Department)
                               .GroupBy(r => r.Department)
-                              .Select(r => new {Department = r.Key, Employees = r.Select(r => r.DisplayName).Distinct()});
+                              .Select(r => new { Department = r.Key, Employees = r.Select(r => r.DisplayName).Distinct() });
+
+        foreach (var record in inactiveRecords)
+        {
+            Console.WriteLine($"{record.Department} has {record.Employees.Count()} inactive employees");
+        }
+    }
+    static void Q6()
+    {
+        var inactiveRecords = records
+                              .Where(r => !r.CloudLifecycleState)
+                              .Where(r => !string.IsNullOrEmpty(r.Department))
+                              .Where(r => !string.IsNullOrEmpty(r.AccessType))
+                              .OrderBy(r => r.Department)
+                              .GroupBy(r => r.Department)
+                              .Select(r => new { Department = r.Key, Employees = r.Select(r => r.DisplayName).Distinct() });
 
         foreach (var record in inactiveRecords)
         {
