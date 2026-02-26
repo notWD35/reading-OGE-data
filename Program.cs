@@ -60,6 +60,7 @@ class Program
         var inactiveRecords = records
                               .Where(r => r.Department is not "" or null)
                               .Where(r => r.CloudLifecycleState is false)
+                              .Where(r => r.AccessType is not "" or null)
                               .OrderBy(r => r.Department)
                               .GroupBy(r => r.Department)
                               .Select(r => new {Department = r.Key, Employees = r.Select(r => r.DisplayName).Distinct()});
